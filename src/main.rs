@@ -11,7 +11,6 @@ const SETTINGS_SVG: Asset = asset!("/assets/settings.svg");
 const ARROW_SVG: Asset = asset!("/assets/backarrow.svg");
 const OPTION_SVG: Asset = asset!("/assets/options.svg");
 
-
 fn main() {
     dioxus::launch(|| {
         rsx! {
@@ -26,6 +25,12 @@ fn main() {
 enum Route {
     #[route("/")]
     App {},
+
+    #[route("/area/:id")]
+    Area { id: i32 },
+
+    #[route("/:..segments")]
+    NotFound { segments: Vec<String> },
 }
 
 #[component]
@@ -33,31 +38,17 @@ fn App() -> Element {
     rsx! {
         div {
             class: "flex flex-col h-screen justify-between",
-            header {                
-                div {
-                    class: "border-b flex justify-between h-10",
-                    div {
-                        class: "w-8 pt-1.5 rounded-full ml-2 hover:bg-gray-200",
-                        img { src: ARROW_SVG }
-                    },
-                    div {
-                        // "Title"
-                    },
-                    div {
-                        class: "w-7 pt-1.5 rounded-full hover:bg-gray-200 mr-2",
-                        img { src: OPTION_SVG }
-                    }
-                }
-            },
+            MainHeader {  }
             main {
                 class: "flex-grow p-4 overflow-y-auto",
-                Card { "Default" }
+                Card {
+                    Link { to: Route::Area { id: 1 }, "Default" }
+                 }
              },
             MainFooter {}
          }
     }
 }
-
 
 #[component]
 fn MainFooter() -> Element {
@@ -79,6 +70,33 @@ fn MainFooter() -> Element {
 }
 
 #[component]
+fn MainHeader() -> Element {
+    let nav = navigator();
+
+    rsx! {
+        header {
+            div {
+                class: "border-b flex justify-between h-10",
+                button {
+                    onclick: move |_| nav.go_back(),
+                    div {
+                        class: "w-8 pt-1 rounded-full ml-2 hover:bg-gray-200",
+                        img { src: ARROW_SVG }
+                    },
+                },
+                div {
+                    // "Title"
+                },
+                div {
+                    class: "w-7 pt-1.5 rounded-full hover:bg-gray-200 mr-2",
+                    img { src: OPTION_SVG }
+                }
+            }
+        },
+    }
+}
+
+#[component]
 fn Card(children: Element) -> Element {
     rsx! {
         div {
@@ -86,4 +104,17 @@ fn Card(children: Element) -> Element {
             {children}
         }
     }
+}
+
+#[component]
+fn Area(id: i32) -> Element {
+    rsx! {
+        MainHeader {  },
+        div { "Area {id}" }
+    }
+}
+
+#[component]
+fn NotFound(segments: Vec<String>) -> Element {
+    todo!()
 }
