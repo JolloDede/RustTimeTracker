@@ -33,17 +33,29 @@ enum Route {
     NotFound { segments: Vec<String> },
 }
 
+struct Area {
+    id: str;
+    caption: str;
+}
+
 #[component]
 fn App() -> Element {
+    let areas = vec!["Default", "ok"];
+
     rsx! {
         div {
             class: "flex flex-col h-screen justify-between",
             MainHeader {  }
             main {
                 class: "flex-grow p-4 overflow-y-auto",
-                Card {
-                    Link { to: Route::Area { id: 1 }, "Default" }
-                 }
+                div {
+                    class: "flex flex-col space-y-2",
+                    for area in areas {
+                        Card {
+                            Link { to: Route::Area { id: 1 }, "{area}" }
+                        },
+                    },
+                },
              },
             MainFooter {}
          }
